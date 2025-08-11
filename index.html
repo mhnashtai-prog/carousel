@@ -3,263 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandLyft 3D Tile Carousel</title>
+    <title>Language Generator</title>
     <style>
         :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --accent: #fd79a8;
+            --black: #0a0a0a;
+            --dark: #1a1a1a;
             --light: #f8f9fa;
-            --dark: #343a40;
-            --teal: #00cec9;
-            --pink: #e84393;
-            --orange: #e17055;
-            --yellow: #fdcb6e;
+            --accent: #6c5ce7;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;500;700&display=swap');
         
         body {
             background-color: var(--light);
-            color: var(--dark);
-            perspective: 1000px;
+            color: var(--black);
+            overflow-x: hidden;
         }
         
-        /* Header styles remain the same as before */
+        .header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+        
+        .title {
+            font-size: 5rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+        
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.3rem;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .author {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 0.2rem;
+            opacity: 0.7;
+        }
         
         .carousel-container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
             position: relative;
+            perspective: 1000px;
         }
         
         .carousel {
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            gap: 2rem;
-            padding: 2rem 0;
+            gap: 3rem;
+            padding: 3rem 0;
+            cursor: grab;
+            user-select: none;
+            transform-style: preserve-3d;
+        }
+        
+        .carousel.dragging {
+            cursor: grabbing;
+            scroll-snap-type: none;
         }
         
         .tile {
-            flex: 0 0 280px;
-            height: 280px;
-            scroll-snap-align: start;
+            flex: 0 0 320px;
+            height: 400px;
+            background: var(--dark);
             border-radius: 20px;
             position: relative;
-            cursor: pointer;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
-                        box-shadow 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        box-shadow 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: var(--shadow);
+            scroll-snap-align: center;
         }
         
-        .tile:hover {
-            transform: translateY(-10px) rotateX(5deg);
-        }
-        
-        .tile-front {
+        .tile-content {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 1.5rem;
-            color: white;
-            font-weight: bold;
-            font-size: 1.4rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            backface-visibility: hidden;
+            border-radius: 20px;
             transform: translateZ(40px);
-            transition: all 0.4s;
+            color: white;
+            text-align: center;
         }
         
-        .tile-back {
+        .tile-number {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.3rem;
+        }
+        
+        .tile-title {
+            font-size: 2.5rem;
+            letter-spacing: 0.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        
+        .tile:nth-child(1) { background: linear-gradient(135deg, #2d3436, #636e72); }
+        .tile:nth-child(2) { background: linear-gradient(135deg, #2d3436, #00b894); }
+        .tile:nth-child(3) { background: linear-gradient(135deg, #2d3436, #0984e3); }
+        .tile:nth-child(4) { background: linear-gradient(135deg, #2d3436, #6c5ce7); }
+        .tile:nth-child(5) { background: linear-gradient(135deg, #2d3436, #e84393); }
+        .tile:nth-child(6) { background: linear-gradient(135deg, #2d3436, #fdcb6e); }
+        
+        .tile:hover {
+            transform: translateY(-20px) rotateX(5deg);
+            box-shadow: 0 40px 60px -20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .tile::before {
+            content: '';
             position: absolute;
             width: 100%;
             height: 100%;
-            background: white;
-            border-radius: 20px;
+            background: inherit;
+            border-radius: inherit;
             transform: translateZ(-20px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            filter: blur(10px);
+            opacity: 0.5;
         }
         
-        .tile-edge {
+        .tile::after {
+            content: '';
             position: absolute;
             width: 100%;
             height: 100%;
             background: linear-gradient(to bottom, 
-                rgba(0,0,0,0.1) 0%, 
-                rgba(0,0,0,0) 10%, 
-                rgba(0,0,0,0) 90%, 
-                rgba(0,0,0,0.1) 100%);
-            border-radius: 20px;
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0) 20%, 
+                rgba(0,0,0,0) 80%, 
+                rgba(0,0,0,0.3) 100%);
+            border-radius: inherit;
             transform: translateZ(-10px);
         }
         
-        /* Individual tile colors */
-        .tile-1 .tile-front { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-        .tile-2 .tile-front { background: linear-gradient(135deg, var(--teal), #55efc4); }
-        .tile-3 .tile-front { background: linear-gradient(135deg, var(--accent), var(--pink)); }
-        .tile-4 .tile-front { background: linear-gradient(135deg, var(--yellow), var(--orange)); }
-        .tile-5 .tile-front { background: linear-gradient(135deg, #0984e3, #74b9ff); }
-        .tile-6 .tile-front { background: linear-gradient(135deg, #00b894, #55efc4); }
-        .tile-7 .tile-front { background: linear-gradient(135deg, #e84393, #fd79a8); }
-        .tile-8 .tile-front { background: linear-gradient(135deg, #fdcb6e, #ffeaa7); }
-        
-        .tile-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        .shadow {
+            position: absolute;
+            width: 90%;
+            height: 30px;
+            background: radial-gradient(ellipse at center, 
+                rgba(0,0,0,0.4) 0%, 
+                rgba(0,0,0,0) 70%);
+            bottom: -20px;
+            left: 5%;
+            border-radius: 50%;
+            filter: blur(10px);
+            transform: translateZ(-30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
         
-        .tile:hover .tile-front {
-            transform: translateZ(50px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .tile:hover .shadow {
+            transform: translateZ(-30px) scale(0.9);
+            opacity: 0.7;
         }
         
-        /* Toolbar and modal styles remain the same */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 3rem;
+            }
+            
+            .tile {
+                flex: 0 0 280px;
+                height: 360px;
+            }
+        }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Header content remains the same -->
+    <div class="header">
+        <div class="title">At a glance</div>
+        <div class="subtitle">Language Generator</div>
+        <div class="author">by Majid Nashtai</div>
+    </div>
     
     <div class="carousel-container">
         <div class="carousel">
-            <div class="tile tile-1" onclick="openModal('Video Campaign')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-film"></i></div>
-                    Video Campaign
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">01</div>
+                    <div class="tile-title">Grammar Rules</div>
                 </div>
+                <div class="shadow"></div>
             </div>
             
-            <div class="tile tile-2" onclick="openModal('Social Media')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-share-alt"></i></div>
-                    Social Media
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">02</div>
+                    <div class="tile-title">Similar Words</div>
                 </div>
+                <div class="shadow"></div>
             </div>
             
-            <div class="tile tile-3" onclick="openModal('Product Demo')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-box-open"></i></div>
-                    Product Demo
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">03</div>
+                    <div class="tile-title">Practice Tests</div>
                 </div>
+                <div class="shadow"></div>
             </div>
             
-            <div class="tile tile-4" onclick="openModal('Brand Story')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-book-open"></i></div>
-                    Brand Story
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">04</div>
+                    <div class="tile-title">Speaking Practice</div>
                 </div>
+                <div class="shadow"></div>
             </div>
             
-            <div class="tile tile-5" onclick="openModal('Tutorial')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                    Tutorial
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">05</div>
+                    <div class="tile-title">Writing Practice</div>
                 </div>
+                <div class="shadow"></div>
             </div>
             
-            <div class="tile tile-6" onclick="openModal('Testimonial')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-quote-right"></i></div>
-                    Testimonial
+            <div class="tile">
+                <div class="tile-content">
+                    <div class="tile-number">06</div>
+                    <div class="tile-title">Useful Expressions</div>
                 </div>
+                <div class="shadow"></div>
             </div>
-            
-            <div class="tile tile-7" onclick="openModal('Event Coverage')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-calendar-alt"></i></div>
-                    Event Coverage
-                </div>
-            </div>
-            
-            <div class="tile tile-8" onclick="openModal('Animation')">
-                <div class="tile-back"></div>
-                <div class="tile-edge"></div>
-                <div class="tile-front">
-                    <div class="tile-icon"><i class="fas fa-magic"></i></div>
-                    Animation
-                </div>
-            </div>
-        </div>
-        
-        <div class="toolbar">
-            <button class="tool-btn" onclick="scrollCarousel(-1)">Previous</button>
-            <button class="tool-btn" onclick="scrollCarousel(1)">Next</button>
-            <button class="tool-btn" onclick="randomTile()">Random</button>
         </div>
     </div>
-    
-    <!-- Modal and footer content remain the same -->
-    
+
     <script>
-        // Enhanced carousel scrolling
+        // Drag to scroll functionality
         const carousel = document.querySelector('.carousel');
+        let isDragging = false,
+            startX,
+            scrollLeft;
         
-        function scrollCarousel(direction) {
-            const scrollAmount = carousel.offsetWidth * 0.7;
-            carousel.scrollBy({
-                left: direction * scrollAmount,
-                behavior: 'smooth'
-            });
-        }
+        carousel.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            carousel.classList.add('dragging');
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+        });
         
-        function randomTile() {
-            const tiles = document.querySelectorAll('.tile');
-            const randomIndex = Math.floor(Math.random() * tiles.length);
-            
-            // Add animation class
-            tiles[randomIndex].classList.add('highlight');
-            setTimeout(() => {
-                tiles[randomIndex].classList.remove('highlight');
-            }, 1000);
-            
-            tiles[randomIndex].scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
-            });
-        }
+        carousel.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 2;
+            carousel.scrollLeft = scrollLeft - walk;
+        });
         
-        // Add hover effects to all tiles
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            carousel.classList.remove('dragging');
+        });
+        
+        // Touch support
+        carousel.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            carousel.classList.add('dragging');
+            startX = e.touches[0].pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+        });
+        
+        carousel.addEventListener('touchmove', (e) => {
+            if(!isDragging) return;
+            const x = e.touches[0].pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 2;
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+        
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+            carousel.classList.remove('dragging');
+        });
+        
+        // 3D hover effects
         document.querySelectorAll('.tile').forEach(tile => {
             tile.addEventListener('mousemove', (e) => {
-                const xAxis = (window.innerWidth / 2 - e.pageX) / 15;
-                const yAxis = (window.innerHeight / 2 - e.pageY) / 15;
-                tile.style.transform = `translateY(-10px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                const rect = tile.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+                
+                tile.style.transform = `translateY(-20px) rotateX(${angleX}deg) rotateY(${angleY}deg)`;
             });
             
             tile.addEventListener('mouseleave', () => {
-                tile.style.transform = 'translateY(0) rotateY(0) rotateX(0)';
+                tile.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
             });
         });
-        
-        // Modal functions remain the same
     </script>
 </body>
 </html>
