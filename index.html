@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandLyft Interactive Carousel</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fd79a8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        
+        nav a:hover {
+            opacity: 0.8;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: linear-gradient(rgba(108, 92, 231, 0.1), rgba(108, 92, 231, 0.05));
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .carousel-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+        
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+        
+        .carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .carousel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .carousel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        .square {
+            flex: 0 0 250px;
+            height: 250px;
+            scroll-snap-align: start;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+        
+        .square:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(108, 92, 231, 0.4);
+        }
+        
+        .square:nth-child(2n) {
+            background: linear-gradient(135deg, #00cec9, #55efc4);
+            box-shadow: 0 8px 20px rgba(0, 206, 201, 0.3);
+        }
+        
+        .square:nth-child(3n) {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+            box-shadow: 0 8px 20px rgba(253, 121, 168, 0.3);
+        }
+        
+        .square:nth-child(4n) {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.3);
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .tool-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .tool-btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--dark);
+            color: white;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .square {
+                flex: 0 0 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">BrandLyft</div>
+        <nav>
+            <ul>
+                <li><a href="#">Brands</a></li>
+                <li><a href="#">Creators</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Use Cases</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Log in</a></li>
+                <li><a href="#" class="signup">Sign up</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>Engage Audiences with Stunning Videos</h1>
+        <p>Boost Your Brand with High-Impact Short Videos from our expert content creators. Our team is ready to propel your business forward.</p>
+    </section>
+    
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="square" onclick="openModal('Project 1')">Video Campaign</div>
+            <div class="square" onclick="openModal('Project 2')">Social Media</div>
+            <div class="square" onclick="openModal('Project 3')">Product Demo</div>
+            <div class="square" onclick="openModal('Project 4')">Brand Story</div>
+            <div class="square" onclick="openModal('Project 5')">Tutorial</div>
+            <div class="square" onclick="openModal('Project 6')">Testimonial</div>
+            <div class="square" onclick="openModal('Project 7')">Event Coverage</div>
+            <div class="square" onclick="openModal('Project 8')">Animation</div>
+        </div>
+        
+        <div class="toolbar">
+            <button class="tool-btn" onclick="scrollCarousel(-1)">Previous</button>
+            <button class="tool-btn" onclick="scrollCarousel(1)">Next</button>
+            <button class="tool-btn" onclick="randomSquare()">Random</button>
+        </div>
+    </div>
+    
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Project Title</h2>
+            <p id="modal-content">Content will appear here when a square is clicked.</p>
+            <button class="tool-btn" style="margin-top: 1rem;">Learn More</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 BrandLyft. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Carousel functionality
+        const carousel = document.querySelector('.carousel');
+        
+        function scrollCarousel(direction) {
+            carousel.scrollBy({
+                left: direction * 300,
+                behavior: 'smooth'
+            });
+        }
+        
+        function randomSquare() {
+            const squares = document.querySelectorAll('.square');
+            const randomIndex = Math.floor(Math.random() * squares.length);
+            squares[randomIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+        
+        // Modal functionality
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        
+        function openModal(title) {
+            modalTitle.textContent = title;
+            modalContent.textContent = `This would open details about ${title}. You can customize this content with specific project details.`;
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        
+        // Close modal when clicking outside content
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
